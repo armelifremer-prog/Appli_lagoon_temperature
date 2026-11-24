@@ -1,0 +1,92 @@
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #eef4f3;
+    color: #243b3a;
+}
+
+.container {
+    max-width: 480px;
+    margin: 40px auto;
+    padding: 25px;
+}
+
+h1 {
+    font-size: 26px;
+    margin-bottom: 8px;
+    color: #164e4a;
+}
+
+.subtitle {
+    color: #718582;
+    margin-bottom: 35px;
+    font-size: 14px;
+}
+
+.form-section {
+    background: white;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+input {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #cbd8d6;
+    border-radius: 8px;
+    font-size: 17px;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 15px;
+    border: none;
+    border-radius: 8px;
+    background-color: #267d75;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #1b625c;
+}
+
+#gps-status {
+    font-size: 13px;
+    color: #718582;
+    margin-top: 10px;
+}
+
+.coordinates {
+    background-color: #f1f6f5;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.coordinates p {
+    margin: 6px 0;
+}
+
+#submit-button {
+    margin-top: 25px;
+    background-color: #164e4a;
+}

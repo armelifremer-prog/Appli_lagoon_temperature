@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lagoon Temperature Survey</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <main class="container">
+
+        <h1>Lagoon Temperature Survey</h1>
+        <p class="subtitle">Coastal water temperature observations</p>
+
+        <section class="form-section">
+
+            <label for="contributor">Your name</label>   
+            <input
+                type="text"
+                id="contributor"
+                placeholder="Enter your name"
+            >
+            <label for="datetime">Date and time (UTC)</label>
+            <input type="datetime-local" id="datetime">
+            <label for="temperature">Water temperature (°C)</label>
+            <input
+                type="number"
+                id="temperature"
+                placeholder="e.g. 26.45"
+                step="0.01"
+            >
+            <small>Sensor uncertainty : ±0.07 °C</small>
+
+            <label>GPS position</label>
+            <button id="gps-button" type="button">
+                Get my position
+            </button>
+
+            <p id="gps-status">Position not yet retrieved</p>
+
+            <div class="coordinates">
+                <p>Latitude: <span id="latitude">—</span></p>
+                <p>Longitude: <span id="longitude">—</span></p>
+                <p>GPS accuracy: <span id="accuracy">—</span></p>
+            </div>
+
+            <button id="submit-button" type="button">
+                Submit observation
+            </button>
+
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
