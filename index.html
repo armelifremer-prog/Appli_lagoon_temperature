@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lagoon Temperature Survey</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#164e4a">
 
     <link rel="stylesheet" href="style.css">
 </head>
@@ -12,6 +14,7 @@
 <body>
 
     <main class="container">
+        <img src="logo_Ifremer_blue.jpg" alt="Logo" class="logo">
 
         <h1>Lagoon Temperature Survey</h1>
         <p class="subtitle">Coastal water temperature observations</p>
@@ -36,11 +39,9 @@
             <small>Sensor uncertainty : ±0.07 °C</small>
 
             <label>GPS position</label>
-            <button id="gps-button" type="button">
-                Get my position
-            </button>
 
-            <p id="gps-status">Position not yet retrieved</p>
+
+            <p id="gps-status">Retrieving position...</p>
 
             <div class="coordinates">
                 <p>Latitude: <span id="latitude">—</span></p>
@@ -58,5 +59,31 @@
 
     <script src="script.js"></script>
 
+
+
+    <div id="success-popup" class="popup-overlay">
+
+        <div class="popup-content">
+            <div class="success-icon">✓</div>
+            <h2>Observation submitted!</h2>
+            <p>Thank you for contributing to lagoon monitoring!</p>
+            <button id="close-popup" type="button">Great!</button>
+        </div>
+
+        <div id="confetti-container"></div>
+
+    </div>
+
+
+    
 </body>
+<script>
+    if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function () {
+            navigator.serviceWorker.register("./service-worker.js")
+                .then(() => console.log("Service Worker registered"))
+                .catch(error => console.error("Service Worker error:", error));
+        });
+    }
+</script>
 </html>

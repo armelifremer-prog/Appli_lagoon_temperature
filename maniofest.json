@@ -1,0 +1,11 @@
+
+{
+    "name": "Lagoon Temperature Survey",
+    "short_name": "Lagoon Survey",
+    "description": "Coastal water temperature observations",
+    "start_url": "./",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "#eef4f3",
+    "theme_color": "#164e4a"
+}
