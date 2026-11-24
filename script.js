@@ -78,7 +78,7 @@ function getUserPosition() {
         {
             enableHighAccuracy: true,
             timeout: 20000,
-            maximumAge: 60000
+            maximumAge: 0
         }
 
     );
@@ -195,4 +195,8 @@ function closeSuccessPopup() {
     document.getElementById("temperature").value = "";
 }
 
-document.getElementById("close-popup").addEventListener("click", closeSuccessPopup);
+const closeButton = document.getElementById("close-popup");
+
+if (closeButton) {
+    closeButton.addEventListener("click", closeSuccessPopup);
+}
