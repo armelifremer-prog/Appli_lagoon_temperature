@@ -90,3 +90,99 @@ button:hover {
     margin-top: 25px;
     background-color: #164e4a;
 }
+
+.logo {
+    display: block;
+    width: 100px;
+    height: auto;
+    margin: 0 auto 20px;
+}
+
+
+/* SUCCESS POPUP */
+.popup-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(20, 50, 50, 0.65);
+    z-index: 1000;
+
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.popup-content {
+    position: relative;
+    z-index: 1002;
+    background: white;
+    padding: 35px 25px;
+    border-radius: 20px;
+    text-align: center;
+    width: calc(100% - 40px);
+    max-width: 360px;
+    margin: auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    animation: popup-appear 0.4s ease-out;
+}
+
+
+.success-icon {
+    width: 65px;
+    height: 65px;
+    line-height: 65px;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+    background: #d8f5e8;
+    color: #16845d;
+    font-size: 38px;
+    font-weight: bold;
+}
+
+.popup-content h2 {
+    color: #164e4a;
+    margin-bottom: 10px;
+}
+
+.popup-content p {
+    color: #718582;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+#close-popup {
+    margin-top: 15px;
+    background: #267d75;
+}
+
+@keyframes popup-appear {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* CONFETTI */
+
+.confetti {
+    position: absolute;
+    top: -20px;
+    width: 9px;
+    height: 14px;
+    z-index: 1001;
+    animation: confetti-fall linear forwards;
+}
+
+@keyframes confetti-fall {
+    to {
+        transform: translateY(110vh) rotate(900deg);
+        opacity: 0;
+    }
+}
+
