@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "lagoon-survey-v2";
+const CACHE_NAME = "lagoon-survey-v3";
 
 const FILES_TO_CACHE = [
     "./",
