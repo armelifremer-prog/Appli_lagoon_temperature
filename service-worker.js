@@ -8,8 +8,8 @@ const FILES_TO_CACHE = [
     "./script.js",
     "./logo_Ifremer_blue.jpg",
     "./manifest.json",
-    "./icon2-192.jpeg",
-    "./icon2-512.jpeg"
+    "./icon2-192.png",
+    "./icon2-512.png"
 ];
 
 // Installation : mise en cache de tous les fichiers essentiels
