@@ -1,4 +1,247 @@
 
+// ======================================
+// BASE DE DONNÉES LOCALE (IndexedDB)
+// ======================================
+
+const DB_NAME = "LagoonSurveyDB";
+const DB_VERSION = 1;
+const STORE_NAME = "observations";
+
+// Ouverture de la base de données
+function openDatabase() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+        request.onupgradeneeded = function (event) {
+            const db = event.target.result;
+
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+                db.createObjectStore(STORE_NAME, {
+                    keyPath: "id"
+                });
+            }
+        };
+
+        request.onsuccess = function () {
+            resolve(request.result);
+        };
+
+        request.onerror = function () {
+            reject(request.error);
+        };
+    });
+}
+
+// Enregistrement d'une observation
+async function saveObservation(observation) {
+    const db = await openDatabase();
+
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction(STORE_NAME, "readwrite");
+
+        transaction.objectStore(STORE_NAME).put(observation);
+
+        transaction.oncomplete = function () {
+            db.close();
+            resolve();
+        };
+
+        transaction.onerror = function () {
+            db.close();
+            reject(transaction.error);
+        };
+
+        transaction.onabort = function () {
+            db.close();
+            reject(transaction.error);
+        };
+    });
+}
+
+// Récupération des observations en attente
+async function getPendingObservations() {
+    const db = await openDatabase();
+
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction(STORE_NAME, "readonly");
+        const request = transaction.objectStore(STORE_NAME).getAll();
+
+        request.onsuccess = function () {
+            resolve(request.result);
+        };
+
+        request.onerror = function () {
+            reject(request.error);
+        };
+
+        transaction.oncomplete = function () {
+            db.close();
+        };
+
+        transaction.onerror = function () {
+            db.close();
+            reject(transaction.error);
+        };
+    });
+}
+
+// Suppression d'une observation après synchronisation réussie
+async function deleteObservation(id) {
+    const db = await openDatabase();
+
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction(STORE_NAME, "readwrite");
+
+        transaction.objectStore(STORE_NAME).delete(id);
+
+        transaction.oncomplete = function () {
+            db.close();
+            resolve();
+        };
+
+        transaction.onerror = function () {
+            db.close();
+            reject(transaction.error);
+        };
+
+        transaction.onabort = function () {
+            db.close();
+            reject(transaction.error);
+        };
+    });
+}
+
+
+// Mise à jour de l'indicateur de synchronisation
+async function updateSyncStatus() {
+
+    const statusElement = document.getElementById("sync-status");
+
+    if (!statusElement) return;
+
+    try {
+        const observations = await getPendingObservations();
+        const count = observations.length;
+
+        if (count === 0) {
+            statusElement.textContent = "All observations synchronized ✓";
+            statusElement.style.color = "green";
+
+        } else {
+            statusElement.textContent =
+                count + (count === 1
+                    ? " observation waiting for synchronization"
+                    : " observations waiting for synchronization");
+
+            statusElement.style.color = "#b7791f";
+        }
+
+    } catch (error) {
+        console.error("Unable to check synchronization status:", error);
+        statusElement.textContent = "Unable to check synchronization status.";
+        statusElement.style.color = "red";
+    }
+}
+
+
+// ======================================
+// SYNCHRONISATION AVEC GOOGLE SHEETS
+// ======================================
+
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxT65SJgFMkoGRkNsNfUZMS81UiS8C0_IecclpwXaiHW_JQY2tJ2-e--fi3W60RSIF18Q/exec";
+
+let syncInProgress = false;
+
+// Envoi d'une observation individuelle
+async function sendObservation(observation) {
+
+    if (!navigator.onLine) {
+        console.log("Offline: observation kept locally.");
+        return false;
+    }
+
+    try {
+        const response = await fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify(observation)
+        });
+
+        const result = await response.json();
+
+        if (result.status === "success") {
+
+            // Suppression locale après confirmation du serveur
+            await deleteObservation(observation.id);
+
+            console.log("Observation synchronized:", observation.id);
+            return true;
+        }
+
+        console.error("Server error:", result);
+        return false;
+
+    } catch (error) {
+        console.error("Synchronization failed:", error);
+        return false;
+    }
+}
+
+
+// Envoi de toutes les observations en attente
+async function syncObservations() {
+
+    // Ne pas tenter de synchronisation si le navigateur est hors ligne
+    if (!navigator.onLine) {
+        console.log("Device is offline. Synchronization postponed.");
+        await updateSyncStatus();
+        return;
+    }
+
+    if (syncInProgress) return;
+
+    syncInProgress = true;
+
+    try {
+        const observations = await getPendingObservations();
+
+        console.log("Pending observations:", observations.length);
+
+        for (const observation of observations) {
+
+            const success = await sendObservation(observation);
+
+            // Si une mesure échoue, on arrête les tentatives
+            if (!success) {
+                break;
+            }
+        }
+
+        const remaining = await getPendingObservations();
+
+        console.log("Remaining observations:", remaining.length);
+        await updateSyncStatus();
+
+    } catch (error) {
+        console.error("Synchronization error:", error);
+
+    } finally {
+        syncInProgress = false;
+    }
+}
+
+
+// Synchronisation au chargement de l'application
+window.addEventListener("load", syncObservations);
+window.addEventListener("load", updateSyncStatus);
+
+// Nouvelle tentative lorsque la connexion revient
+window.addEventListener("online", syncObservations);
+
+
+
+
+
+
 let currentLatitude = null;
 let currentLongitude = null;
 let currentAccuracy = null;
@@ -89,25 +332,33 @@ getUserPosition();
 
 
 
+
+
+
+
+
+
 const submitButton = document.getElementById("submit-button");
 
-submitButton.addEventListener("click", function () {
-    //Cas où le GPS n'a pas fonctionné
+submitButton.addEventListener("click", async function () {
+
+    // Vérification du GPS
     if (currentLatitude === null || currentLongitude === null) {
-    alert("GPS position unavailable. Please enable location access before submitting.");
-    return;
+        alert("GPS position unavailable. Please enable location access before submitting.");
+        return;
     }
-    //On convertit en valeurs
+
+    // Récupération des valeurs
     const datetimeLocal = document.getElementById("datetime").value;
     const temperature = document.getElementById("temperature").value;
-    //On change le format pour du UTC
-    const datetimeUTC = new Date(datetimeLocal).toISOString();
-    //On stocke le contributeur
     const contributor = document.getElementById("contributor").value;
 
-    
-    //On stocke les données dans une variable
+    // Conversion de la date en UTC
+    const datetimeUTC = new Date(datetimeLocal).toISOString();
+
+    // Création de l'observation avec un identifiant unique
     const observation = {
+        id: crypto.randomUUID(),
         datetime: datetimeUTC,
         temperature: Number(temperature),
         latitude: currentLatitude,
@@ -116,30 +367,28 @@ submitButton.addEventListener("click", function () {
         contributor: contributor
     };
 
-    console.log(observation);
+    console.log("New observation:", observation);
 
-    //Cette partie envoie les données au google sheet
-    fetch("https://script.google.com/macros/s/AKfycbxT65SJgFMkoGRkNsNfUZMS81UiS8C0_IecclpwXaiHW_JQY2tJ2-e--fi3W60RSIF18Q/exec", {
-    method: "POST",
-    body: JSON.stringify(observation)
-    })
-    .then(response => response.json())
-    .then(result => {
-        console.log("Server response:", result);
+    try {
+        // 1. Sauvegarde locale avant tout envoi
+        await saveObservation(observation);
 
-        if (result.status === "success") {
-            showSuccessPopup();
-        } else {
-            alert("Something went wrong. Please try again.");
-        }
-    })
-    .catch(error => {
-        console.error("Error:", error);
-    });
+        console.log("Observation saved locally.");
+        await updateSyncStatus();
 
+        // 2. Confirmation à l'utilisateur
+        showSuccessPopup();
 
+        // 3. Tentative de synchronisation
+        syncObservations();
+
+    } catch (error) {
+        console.error("Local storage error:", error);
+        alert("Unable to save the observation on this device.");
+    }
 
 });
+
 
 
 function showSuccessPopup() {
