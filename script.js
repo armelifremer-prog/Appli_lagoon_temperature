@@ -7,38 +7,6 @@ const DB_NAME = "LagoonSurveyDB";
 const DB_VERSION = 1;
 const STORE_NAME = "observations";
 
-// ======================================
-// PROTECTION DU STOCKAGE LOCAL
-// ======================================
-
-async function protectLocalStorage() {
-    if (!navigator.storage || !navigator.storage.persist) {
-        console.log("Persistent storage is not supported.");
-        return;
-    }
-
-    try {
-        const alreadyPersistent = await navigator.storage.persisted();
-
-        if (alreadyPersistent) {
-            console.log("Storage is already persistent.");
-            return;
-        }
-
-        const granted = await navigator.storage.persist();
-
-        console.log(
-            granted
-                ? "Persistent storage granted."
-                : "Persistent storage not granted."
-        );
-
-    } catch (error) {
-        console.error("Storage persistence error:", error);
-    }
-}
-
-protectLocalStorage();
 // Ouverture de la base de données
 function openDatabase() {
     return new Promise((resolve, reject) => {
