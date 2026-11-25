@@ -6,7 +6,7 @@ const FILES_TO_CACHE = [
     "./index.html",
     "./style.css",
     "./script.js",
-    "./logo_Ifremer_blue.jps",
+    "./logo_Ifremer_blue.jpg",
     "./manifest.json",
     "./icon2-192.jpeg",
     "./icon2-512.jpeg"
