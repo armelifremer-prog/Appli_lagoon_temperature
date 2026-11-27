@@ -338,8 +338,61 @@ getUserPosition();
 
 
 
+// ======================================
+// GESTION DU NUMÉRO DE CAPTEUR
+// ======================================
+
+const sensorSetup = document.getElementById("sensor-setup");
+const sensorSelect = document.getElementById("sensor-select");
+const sensorDisplay = document.getElementById("sensor-display");
+const currentSensor = document.getElementById("current-sensor");
+
+const saveSensorButton = document.getElementById("save-sensor");
+const changeSensorButton = document.getElementById("change-sensor");
 const submitButton = document.getElementById("submit-button");
 
+let sensorNumber = localStorage.getItem("sensorNumber");
+
+// Affichage du capteur enregistré
+function displaySensor() {
+    sensorSetup.style.display = "none";
+    sensorDisplay.style.display = "flex";
+    currentSensor.textContent = sensorNumber;
+    submitButton.disabled = false;
+}
+
+// Première ouverture ou récupération du capteur enregistré
+if (sensorNumber) {
+    displaySensor();
+} else {
+    sensorSetup.style.display = "block";
+    sensorDisplay.style.display = "none";
+    submitButton.disabled = true;
+}
+
+// Enregistrement du choix
+saveSensorButton.addEventListener("click", function () {
+    const selectedSensor = sensorSelect.value;
+
+    if (!selectedSensor) {
+        alert("Please select a sensor number.");
+        return;
+    }
+
+    sensorNumber = selectedSensor;
+    localStorage.setItem("sensorNumber", sensorNumber);
+
+    displaySensor();
+});
+
+// Modification du capteur
+changeSensorButton.addEventListener("click", function () {
+    sensorSelect.value = sensorNumber;
+
+    sensorSetup.style.display = "block";
+    sensorDisplay.style.display = "none";
+    submitButton.disabled = true;
+});
 submitButton.addEventListener("click", async function () {
 
     // Vérification du GPS
@@ -351,14 +404,18 @@ submitButton.addEventListener("click", async function () {
     // Récupération des valeurs
     const datetimeLocal = document.getElementById("datetime").value;
     const temperature = document.getElementById("temperature").value;
-    const contributor = document.getElementById("contributor").value;
+    const contributor = sensorNumber;
 
     // Conversion de la date en UTC
     const datetimeUTC = new Date(datetimeLocal).toISOString();
 
     // Création de l'observation avec un identifiant unique
+    // Création de l'identifiant de la mesure
+    const dateTimeCode = datetimeLocal.replace(/\D/g, "");
+    const observationID = `P${sensorNumber}${dateTimeCode}`;
+
     const observation = {
-        id: crypto.randomUUID(),
+        id: observationID,
         datetime: datetimeUTC,
         temperature: Number(temperature),
         latitude: currentLatitude,
@@ -439,7 +496,6 @@ function closeSuccessPopup() {
     document.getElementById("success-popup").style.display = "none";
 
     // Clear the form fields
-    document.getElementById("contributor").value = "";
     document.getElementById("datetime").value = "";
     document.getElementById("temperature").value = "";
 }

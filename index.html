@@ -21,12 +21,28 @@
 
         <section class="form-section">
 
-            <label for="contributor">Your name</label>   
-            <input
-                type="text"
-                id="contributor"
-                placeholder="Enter your name"
-            >
+            <div id="sensor-setup">
+            <label for="sensor-select">Select your sensor number</label>
+            <select id="sensor-select">
+                <option value="">Choose a sensor</option>
+                <option value="1">Sensor 1</option>
+                <option value="2">Sensor 2</option>
+                <option value="3">Sensor 3</option>
+                <option value="4">Sensor 4</option>
+                <option value="5">Sensor 5</option>
+                <option value="6">Sensor 6</option>
+                <option value="7">Sensor 7</option>
+                <option value="8">Sensor 8</option>
+            </select>
+            <button id="save-sensor" type="button">Confirm sensor</button>
+        </div>
+
+        <div id="sensor-display" class="sensor-display" style="display: none;">
+            <span>Sensor <strong id="current-sensor"></strong></span>
+            <button id="change-sensor" class="change-sensor-button" type="button">
+                Change
+            </button>
+        </div>
             <label for="datetime">Date and time (UTC)</label>
             <input type="datetime-local" id="datetime">
             <label for="temperature">Water temperature (°C)</label>

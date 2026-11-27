@@ -186,3 +186,30 @@ button:hover {
     }
 }
 
+
+.sensor-display {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+    font-size: 13px;
+    color: #555;
+}
+
+.sensor-display .change-sensor-button {
+    width: auto;
+    padding: 4px 9px;
+    margin-top: 0;
+    border: 1px solid #164e4a;
+    border-radius: 5px;
+    background-color: transparent;
+    color: #164e4a;
+    font-size: 11px;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.sensor-display .change-sensor-button:hover {
+    background-color: #eef4f3;
+}
